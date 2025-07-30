@@ -4,18 +4,21 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import theme from './theme';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Movies from './pages/Movies';
-import MovieDetail from './pages/MovieDetail';
-import Login from './pages/login';
+
+import Home from './pages/HomePage';
+import Movies from './pages/MoviesPage';
+import MovieDetail from './pages/MovieDetails';
+import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import Profile from './pages/Profile';
-import Bookings from './pages/Bookings';
-import PaymentPage from './pages/PaymentPage';
-import BookingPage from './pages/BookingPage';
+import Profile from './pages/AboutUs';        // Temporary substitute for Profile
+import Bookings from './pages/ContactUs';     // Temporary substitute for Bookings
+import PaymentPage from './pages/Payment';
+import BookingPage from './pages/Modal';      // Temporary substitute for BookingPage
 import SeatSelection from './pages/SeatSelection';
+
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
