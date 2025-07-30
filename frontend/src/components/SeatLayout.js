@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { Chair } from '@mui/icons-material';
 
 const SeatLayout = ({ totalSeats, selectedSeats, lockedSeats, onSeatSelect }) => {
