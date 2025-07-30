@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        let isMounted = true;
         // Check if user is logged in
         const token = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
             setUser(JSON.parse(savedUser));
         }
         setLoading(false);
+        return () => { isMounted = false; };
     }, []);
 
     const login = async (email, password) => {
@@ -25,7 +27,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', response.data.access_token);
             localStorage.setItem('user', JSON.stringify({ email }));
             setUser({ email });
-            navigate('/movies');
+            if (typeof window !== 'undefined') navigate('/movies');
             return { success: true };
         } catch (error) {
             return {
@@ -51,7 +53,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
-        navigate('/');
+        if (typeof window !== 'undefined') navigate('/');
     };
 
     const value = {

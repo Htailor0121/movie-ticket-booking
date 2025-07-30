@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from routes import auth, movies, theaters, shows, bookings
 from database import engine
 from models import Base
@@ -22,6 +23,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="static")
 
 # Include routers
 app.include_router(auth.router)
