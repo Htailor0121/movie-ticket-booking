@@ -24,8 +24,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount static files
-app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="static")
+build_dir = os.path.join(os.path.dirname(__file__), "../frontend/build")
+if os.path.isdir(build_dir):
+    app.mount("/", StaticFiles(directory=build_dir, html=True), name="static")
+else:
+    print(f"Warning: Static build directory '{build_dir}' does not exist. Static files will not be served.")
 
 # Include routers
 app.include_router(auth.router)
