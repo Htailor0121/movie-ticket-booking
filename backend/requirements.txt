@@ -11,3 +11,4 @@ python-dotenv==1.0.0
 pytz==2024.1
 bcrypt==3.2.0
 stripe==2.60.0
+PyJWT==2.8.0
