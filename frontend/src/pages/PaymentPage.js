@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { CreditCard, AccountBalance, Payment } from '@mui/icons-material';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../api';
 
 const PaymentPage = () => {
   const { bookingId } = useParams();
@@ -39,7 +39,7 @@ const PaymentPage = () => {
 
   const fetchBookingDetails = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/bookings/${bookingId}`);
+      const response = await api.get(`/bookings/${bookingId}`);
       setBookingDetails(response.data);
       setLoading(false);
     } catch (error) {
@@ -59,7 +59,7 @@ const PaymentPage = () => {
       }
       setLoading(true);
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await axios.put(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/bookings/${bookingId}`, {
+      await api.put(`/bookings/${bookingId}`, {
         payment_status: 'completed',
         payment_method: paymentMethod
       });
