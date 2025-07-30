@@ -39,7 +39,7 @@ const PaymentPage = () => {
 
   const fetchBookingDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/bookings/${bookingId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/bookings/${bookingId}`);
       setBookingDetails(response.data);
       setLoading(false);
     } catch (error) {
@@ -59,7 +59,7 @@ const PaymentPage = () => {
       }
       setLoading(true);
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await axios.put(`http://localhost:8000/bookings/${bookingId}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/bookings/${bookingId}`, {
         payment_status: 'completed',
         payment_method: paymentMethod
       });

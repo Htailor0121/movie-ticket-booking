@@ -37,7 +37,7 @@ const BookingPage = () => {
 
   const fetchShowDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/shows/${showId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/shows/${showId}`);
       setShowDetails(response.data);
       setLockedSeats(response.data.locked_seats || []);
       setLoading(false);
@@ -49,7 +49,7 @@ const BookingPage = () => {
 
   const lockSeats = async (seats) => {
     try {
-      const response = await axios.post(`http://localhost:8000/shows/${showId}/lock-seats`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/shows/${showId}/lock-seats`, {
         seat_numbers: seats
       });
       
@@ -68,7 +68,7 @@ const BookingPage = () => {
 
   const unlockSeats = async () => {
     try {
-      await axios.post(`http://localhost:8000/shows/${showId}/unlock-seats`, {
+      await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/shows/${showId}/unlock-seats`, {
         seat_numbers: selectedSeats
       });
       setLockedSeats([]);
@@ -119,7 +119,7 @@ const BookingPage = () => {
 
   const handleBooking = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/bookings/', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/bookings/`, {
         show_id: showId,
         num_seats: selectedSeats.length,
         total_amount: showDetails.price * selectedSeats.length,
