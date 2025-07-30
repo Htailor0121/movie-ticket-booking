@@ -9,7 +9,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Movies from './pages/Movies';
 import MovieDetail from './pages/MovieDetail';
-import Login from './pages/Login';
+import Login from './pages/login';
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import Bookings from './pages/Bookings';
