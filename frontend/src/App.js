@@ -17,35 +17,35 @@ import { AuthProvider } from './context/AuthContext';
 
 function App() {
     return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
         <Router>
-          <Navbar />
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/movies" element={<Movies />} />
-            <Route path="/movies/:id" element={<MovieDetail />} />
-            <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/bookings" element={<Bookings />} />
-            </Routes>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <AuthProvider>
+                    <Navbar />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/movies" element={<Movies />} />
+                        <Route path="/movies/:id" element={<MovieDetail />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<SignUp />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/bookings" element={<Bookings />} />
+                    </Routes>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="light"
+                    />
+                </AuthProvider>
+            </ThemeProvider>
         </Router>
-      </AuthProvider>
-    </ThemeProvider>
     );
 }
 
