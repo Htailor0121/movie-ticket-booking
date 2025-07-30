@@ -1,0 +1,39 @@
+.contact-us {
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.success-message {
+    margin-top: 20px;
+    color: green;
+}
+h2 {
+    font-size: 2.5em;
+    color: black;
+    margin-bottom: 30px;
+}

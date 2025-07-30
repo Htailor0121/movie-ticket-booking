@@ -1,0 +1,56 @@
+.movie-details {
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4; /* Light background color for contrast */
+    background-color: #fff; /* Fallback color */
+    background-image: url('https://img.pikbest.com/back_our/20210913/bg/b9197a1d9fe1c.png!w700wp'); /* Add background image */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the background image */
+}
+
+.movie-image {
+    width: 300px; /* Adjust width as necessary */
+    height: auto;
+    margin: 20px 0;
+    border-radius: 10px; /* Rounded corners for the image */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.movie-genre, .movie-price, .movie-duration, .movie-release {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #333;
+}
+
+.movie-description {
+    font-size: 1.1em;
+    margin: 15px 0;
+    color: #666;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+.book-now-button {
+    background-color: #000000; /* Bootstrap primary color */
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.book-now-button:hover {
+    background-color: #333;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #000;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}

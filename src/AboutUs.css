@@ -1,0 +1,10 @@
+.about-us {
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.about-us p {
+    margin: 15px 0;
+    line-height: 1.6;
+}
