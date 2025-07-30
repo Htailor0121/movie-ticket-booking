@@ -28,6 +28,7 @@ const Payment = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
     const fetchBooking = async () => {
       try {
         const response = await getBookings();
@@ -35,7 +36,9 @@ const Payment = () => {
         if (!currentBooking) {
           throw new Error('Booking not found');
         }
-        setBooking(currentBooking);
+        if (isMounted) {
+          setBooking(currentBooking);
+        }
       } catch (error) {
         console.error('Error fetching booking:', error);
         toast.error('Failed to load booking details');
@@ -45,6 +48,7 @@ const Payment = () => {
     };
 
     fetchBooking();
+    return () => { isMounted = false; };
   }, [bookingId]);
 
   const handleInputChange = (e) => {
@@ -68,7 +72,7 @@ const Payment = () => {
       // await updatePayment(bookingId, 'DEMO_PAYMENT_ID');
       
       toast.success('Payment successful!');
-      navigate('/profile');
+      if (typeof window !== 'undefined') navigate('/profile');
     } catch (error) {
       console.error('Error processing payment:', error);
       toast.error('Payment failed. Please try again.');

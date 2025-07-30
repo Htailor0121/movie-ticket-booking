@@ -32,7 +32,9 @@ const PaymentPage = () => {
   const [cvv, setCvv] = useState('');
 
   useEffect(() => {
+    let isMounted = true;
     fetchBookingDetails();
+    return () => { isMounted = false; };
   }, [bookingId]);
 
   const fetchBookingDetails = async () => {
@@ -55,19 +57,14 @@ const PaymentPage = () => {
           return;
         }
       }
-
-      // Simulate payment processing
       setLoading(true);
       await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Update booking status
       await axios.put(`http://localhost:8000/bookings/${bookingId}`, {
         payment_status: 'completed',
         payment_method: paymentMethod
       });
-
       toast.success('Payment successful!');
-      navigate('/profile'); // Redirect to profile page after successful payment
+      if (typeof window !== 'undefined') navigate('/profile');
     } catch (error) {
       toast.error('Payment failed. Please try again.');
       console.error('Payment error:', error);

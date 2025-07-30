@@ -38,17 +38,19 @@ const MovieDetail = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    fetchMovieDetails();
+    let isMounted = true;
+    fetchMovieDetails(isMounted);
+    return () => { isMounted = false; };
   }, [id]);
 
-  const fetchMovieDetails = async () => {
+  const fetchMovieDetails = async (isMounted) => {
     try {
       const data = await getMovieById(id);
-      setMovie(data);
-      setLoading(false);
+      if (isMounted) setMovie(data);
+      if (isMounted) setLoading(false);
     } catch (err) {
-      setError('Failed to fetch movie details. Please try again later.');
-      setLoading(false);
+      if (isMounted) setError('Failed to fetch movie details. Please try again later.');
+      if (isMounted) setLoading(false);
     }
   };
 
@@ -63,10 +65,10 @@ const MovieDetail = () => {
   const handleBookNow = (showId) => {
     if (!user) {
       toast.error('Please login to book tickets');
-      navigate('/login');
+      if (typeof window !== 'undefined') navigate('/login');
       return;
     }
-    navigate(`/movies/${id}/book/${showId}`);
+    if (typeof window !== 'undefined') navigate(`/movies/${id}/book/${showId}`);
   };
 
   const dates = Array.from({ length: 7 }, (_, i) => {

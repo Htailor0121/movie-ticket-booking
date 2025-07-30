@@ -30,16 +30,9 @@ const BookingPage = () => {
   const [showTimeoutDialog, setShowTimeoutDialog] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     fetchShowDetails();
-    return () => {
-      // Cleanup: Unlock seats when component unmounts
-      if (selectedSeats.length > 0) {
-        unlockSeats();
-      }
-      if (seatLockTimer) {
-        clearInterval(seatLockTimer);
-      }
-    };
+    return () => { isMounted = false; };
   }, [showId]);
 
   const fetchShowDetails = async () => {
@@ -132,9 +125,8 @@ const BookingPage = () => {
         total_amount: showDetails.price * selectedSeats.length,
         seat_numbers: selectedSeats
       });
-      
       toast.success('Booking successful!');
-      navigate(`/payment/${response.data.id}`);
+      if (typeof window !== 'undefined') navigate(`/payment/${response.data.id}`);
     } catch (error) {
       toast.error('Failed to create booking');
       console.error('Booking error:', error);
