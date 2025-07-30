@@ -1,208 +1,194 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  TextField,
-  Button,
-  Box,
-  Divider,
-  CircularProgress,
-} from '@mui/material';
-import { getBookings } from '../api';
-import { toast } from 'react-toastify';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Modal from './Modal'; // Import the Modal component
+import './Payment.css';
 
 const Payment = () => {
-  const { bookingId } = useParams();
-  const navigate = useNavigate();
-  const [booking, setBooking] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
-  const [paymentDetails, setPaymentDetails] = useState({
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: '',
-  });
+    const { movieTitle, selectedTime, totalPrice } = useParams();
+    const decodedMovieTitle = decodeURIComponent(movieTitle);
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchBooking = async () => {
-      try {
-        const response = await getBookings();
-        const currentBooking = response.data.find(b => b.id === parseInt(bookingId));
-        if (!currentBooking) {
-          throw new Error('Booking not found');
-        }
-        if (isMounted) {
-          setBooking(currentBooking);
-        }
-      } catch (error) {
-        console.error('Error fetching booking:', error);
-        toast.error('Failed to load booking details');
-      } finally {
-        setLoading(false);
-      }
+    const paymentMethods = [
+        { name: 'Credit Card', img: 'https://img.freepik.com/free-vector/black-credit-card_1017-6276.jpg?size=338&ext=jpg&ga=GA1.1.1887574231.1729036800&semt=ais_hybrid' },
+        { name: 'Debit Card', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ3u4YFF39K7pxBSUCWIDW0L9C3B5_b7cADw&s' },
+        { name: 'PayPal', img: 'https://www.citypng.com/public/uploads/preview/transparent-hd-paypal-logo-701751694777788ilpzr3lary.png' },
+        { name: 'Google Pay', img: 'https://w7.pngwing.com/pngs/191/51/png-transparent-google-pay-or-tez-hd-logo-thumbnail.png' }
+    ];
+
+    const [loading, setLoading] = useState(false);
+    const [paymentSuccess, setPaymentSuccess] = useState(null);
+    const [selectedMethod, setSelectedMethod] = useState(null);
+    const [cardDetails, setCardDetails] = useState({ cardNumber: '', expiry: '', cvv: '' });
+    const [cardErrors, setCardErrors] = useState({ cardNumber: '', expiry: '', cvv: '' }); // Validation errors for card details
+    const [upiId, setUpiId] = useState('');
+    const [upiError, setUpiError] = useState(''); // State for UPI ID error
+    const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
+
+    const handlePayment = (method) => {
+        setSelectedMethod(method);
+        setUpiError(''); // Reset UPI error on method change
+        setModalOpen(true); // Open the modal
     };
 
-    fetchBooking();
-    return () => { isMounted = false; };
-  }, [bookingId]);
+    const handleCardChange = (e) => {
+        setCardDetails({ ...cardDetails, [e.target.name]: e.target.value });
+        setCardErrors({ ...cardErrors, [e.target.name]: '' }); // Clear the error when user starts typing
+    };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPaymentDetails(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    const handleUpiChange = (e) => {
+        setUpiId(e.target.value);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setProcessing(true);
+    const validateCardDetails = () => {
+        let errors = {};
+        let isValid = true;
 
-    try {
-      // In a real application, you would integrate with a payment gateway here
-      // For demo purposes, we'll simulate a successful payment
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Update booking with payment information
-      // await updatePayment(bookingId, 'DEMO_PAYMENT_ID');
-      
-      toast.success('Payment successful!');
-      if (typeof window !== 'undefined') navigate('/profile');
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      toast.error('Payment failed. Please try again.');
-    } finally {
-      setProcessing(false);
-    }
-  };
+        // Validate card number
+        if (!cardDetails.cardNumber || cardDetails.cardNumber.length < 16) {
+            errors.cardNumber = 'Please enter a valid 16-digit card number.';
+            isValid = false;
+        }
 
-  if (loading) {
+        // Validate expiry date
+        const expiryRegex = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/; // Format: MM/YY
+        if (!cardDetails.expiry || !expiryRegex.test(cardDetails.expiry)) {
+            errors.expiry = 'Please enter a valid expiry date (MM/YY).';
+            isValid = false;
+        }
+
+        // Validate CVV
+        if (!cardDetails.cvv || cardDetails.cvv.length < 3 || cardDetails.cvv.length > 4) {
+            errors.cvv = 'Please enter a valid CVV.';
+            isValid = false;
+        }
+
+        setCardErrors(errors);
+        return isValid;
+    };
+
+    const validateUpiId = (id) => {
+        const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/; // Basic UPI ID regex
+        return upiRegex.test(id);
+    };
+
+    const processPayment = () => {
+        setLoading(true);
+        setPaymentSuccess(null);
+
+        // Validate card details if selected method is card-based
+        if (selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card') {
+            if (!validateCardDetails()) {
+                setLoading(false);
+                return;
+            }
+        }
+
+        // Validate UPI ID if using Google Pay or PayPal
+        if (selectedMethod === 'Google Pay' || selectedMethod === 'PayPal') {
+            if (!validateUpiId(upiId)) {
+                setLoading(false);
+                setUpiError('Please enter a valid UPI ID.');
+                return;
+            }
+        }
+
+        // Simulate a payment process
+        setTimeout(() => {
+            setLoading(false);
+            setPaymentSuccess(`You have successfully completed the payment using ${selectedMethod}.`);
+            setModalOpen(false); // Close modal on success
+        }, 2000);
+    };
+
+    const handleCancel = () => {
+        setModalOpen(false); // Close modal when user clicks "Cancel"
+        setSelectedMethod(null); // Reset selected method
+        setCardDetails({ cardNumber: '', expiry: '', cvv: '' }); // Clear card details
+        setUpiId(''); // Clear UPI ID
+        setUpiError(''); // Clear UPI error
+        setCardErrors({ cardNumber: '', expiry: '', cvv: '' }); // Clear card errors
+        setPaymentSuccess(null); // Reset success message
+    };
+
     return (
-      <Container sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress />
-      </Container>
+        <div className="payment">
+            <h2>Select Payment Method for {decodedMovieTitle}</h2>
+            <h3>Total Amount: ₹{totalPrice}</h3>
+            <h4>Selected Time: {selectedTime}</h4>
+
+            <div className="payment-methods">
+                {paymentMethods.map((method, index) => (
+                    <div key={index} className="payment-card" onClick={() => handlePayment(method.name)}>
+                        <img src={method.img} alt={method.name} />
+                        <h3>{method.name}</h3>
+                    </div>
+                ))}
+            </div>
+
+            {/* Modal for payment options */}
+            <Modal isOpen={isModalOpen} onClose={handleCancel}>
+                {loading && <p>Processing your payment... Please wait.</p>}
+                {paymentSuccess && <p className="success">{paymentSuccess}</p>}
+                {upiError && <p className="error">{upiError}</p>}
+
+                {selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card' ? (
+                    <div className="card-details">
+                        <h4>Enter Card Details</h4>
+                        <input
+                            type="text"
+                            name="cardNumber"
+                            placeholder="Card Number"
+                            value={cardDetails.cardNumber}
+                            onChange={handleCardChange}
+                            required
+                        />
+                        {cardErrors.cardNumber && <p className="error">{cardErrors.cardNumber}</p>}
+                        
+                        <input
+                            type="text"
+                            name="expiry"
+                            placeholder="MM/YY"
+                            value={cardDetails.expiry}
+                            onChange={handleCardChange}
+                            required
+                        />
+                        {cardErrors.expiry && <p className="error">{cardErrors.expiry}</p>}
+
+                        <input
+                            type="text"
+                            name="cvv"
+                            placeholder="CVV"
+                            value={cardDetails.cvv}
+                            onChange={handleCardChange}
+                            required
+                        />
+                        {cardErrors.cvv && <p className="error">{cardErrors.cvv}</p>}
+                    </div>
+                ) : selectedMethod === 'Google Pay' || selectedMethod === 'PayPal' ? (
+                    <div className="upi-details">
+                        <h4>Enter UPI ID</h4>
+                        <input
+                            type="text"
+                            placeholder="Enter your UPI ID"
+                            value={upiId}
+                            onChange={handleUpiChange}
+                            required
+                        />
+                    </div>
+                ) : null}
+
+                <div className="modal-actions">
+                    <button
+                        onClick={processPayment}
+                        className="pay-button"
+                        disabled={loading} // Disable button while processing
+                    >
+                        Pay Now
+                    </button>
+                    <button onClick={handleCancel} className="cancel-button">Cancel</button>
+                </div>
+            </Modal>
+        </div>
     );
-  }
-
-  if (!booking) {
-    return (
-      <Container>
-        <Typography>Booking not found</Typography>
-      </Container>
-    );
-  }
-
-  return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Payment Details
-      </Typography>
-
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Booking Summary
-            </Typography>
-            <Box sx={{ my: 2 }}>
-              <Typography variant="body1">
-                Booking ID: {booking.id}
-              </Typography>
-              <Typography variant="body1">
-                Movie: {booking.movie_title}
-              </Typography>
-              <Typography variant="body1">
-                Show Time: {new Date(booking.show_time).toLocaleString()}
-              </Typography>
-              <Typography variant="body1">
-                Seats: {booking.seats.join(', ')}
-              </Typography>
-              <Typography variant="h6" sx={{ mt: 2 }}>
-                Total Amount: ₹{booking.total_amount}
-              </Typography>
-            </Box>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Payment Information
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-              <TextField
-                fullWidth
-                label="Card Number"
-                name="cardNumber"
-                value={paymentDetails.cardNumber}
-                onChange={handleInputChange}
-                margin="normal"
-                required
-                placeholder="1234 5678 9012 3456"
-              />
-              <TextField
-                fullWidth
-                label="Cardholder Name"
-                name="cardName"
-                value={paymentDetails.cardName}
-                onChange={handleInputChange}
-                margin="normal"
-                required
-              />
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Expiry Date"
-                    name="expiryDate"
-                    value={paymentDetails.expiryDate}
-                    onChange={handleInputChange}
-                    margin="normal"
-                    required
-                    placeholder="MM/YY"
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="CVV"
-                    name="cvv"
-                    value={paymentDetails.cvv}
-                    onChange={handleInputChange}
-                    margin="normal"
-                    required
-                    placeholder="123"
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 3 }}
-                disabled={processing}
-              >
-                {processing ? (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <CircularProgress size={24} sx={{ mr: 1 }} />
-                    Processing...
-                  </Box>
-                ) : (
-                  'Pay Now'
-                )}
-              </Button>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
-  );
 };
 
-export default Payment; 
+export default Payment;
