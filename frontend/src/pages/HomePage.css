@@ -1,4 +1,5 @@
 /* General Styles */
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -17,7 +18,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    background-color: #000; /* Solid black */
     padding: 15px 30px;
     color: white;
     position: fixed; /* Keep it fixed at the top */
@@ -33,14 +34,14 @@ a {
 }
 
 .nav-links {
-    list-style: none;
     display: flex;
-    gap: 20px;
+    list-style: none;
+    gap: 30px; /* Increased spacing */
 }
 
 .nav-links li {
     font-size: 16px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* Adds a shadow to the text */
+    text-shadow: 1px 1px 2px rgba(255, 209, 209, 0.7); /* Adds a shadow to the text */
 }
 
 /* Hero Section Styles */
@@ -58,6 +59,7 @@ a {
     padding-top: 60px; /* Space for fixed navbar */
     padding-bottom: 60px; /* Space for footer if needed */
 }
+
 .hero-content {
     background-color: rgba(225, 225, 225, 0.5);
     padding: 20px;
@@ -70,12 +72,18 @@ a {
 
 .btn {
     background-color: #e50914;
-    color: rgb(0, 0, 0);
+    color: white; /* Changed to improve contrast */
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+}
+
+.btn:hover {
+    background-color: #b0060e;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
 }
 
 /* Footer Styles */
@@ -90,4 +98,40 @@ a {
     z-index: 10; /* Keeps footer above other elements */
 }
 
+/* --- Nav Link Enhancements --- */
+
+.nav-links li a:hover {
+    color: #e50914;
+    text-decoration: underline;
+    transition: 0.3s;
+}
+
+/* Highlight Login and Sign Up as buttons */
+.nav-links li:last-child a,
+.nav-links li:nth-last-child(2) a {
+    background-color: #e50914;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.nav-links li:last-child a:hover,
+.nav-links li:nth-last-child(2) a:hover {
+    background-color: #b0060e;
+}
+
 /* Additional styles remain unchanged... */
+.nav-button {
+    background-color: #e50914;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-button:hover {
+    background-color: #b0060e;
+    transform: scale(1.05);
+}

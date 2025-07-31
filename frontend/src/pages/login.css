@@ -1,81 +1,113 @@
-/* Set background image */
+/* Full-page background */
 body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: url('https://png.pngtree.com/background/20230618/original/pngtree-blank-movie-ticket-with-popcorn-bucket-filmstrip-clapperboard-and-camera-in-picture-image_3709549.jpg') no-repeat center center fixed;
     background-size: cover;
-    font-family: Arial, sans-serif;
-}
-
-/* Login container */
-.login-container {
-    width: 350px;
-   background: rgba(0, 0, 0, 0.7);  /* Semi-transparent black */
+    color: #fff;
+  }
+  
+  /* Center the login card */
+  .login-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
-    border-radius: 10px;
+  }
+  
+  /* Fully transparent blurred login card */
+  .login-card {
+    background: rgba(255, 255, 255, 0.01);  /* Invisible but allows blur */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 35px 30px;
+    width: 100%;
+    max-width: 380px;
     text-align: center;
-    color: rgb(0, 0, 0);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Login heading */
-.login-container h2 {
+    box-shadow: 0 0 0 transparent;
+  }
+  
+  /* Title */
+  .login-card h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  .form-group {
     margin-bottom: 20px;
-    font-size: 24px;
-}
-
-/* Input fields */
-.form-group {
-    margin-bottom: 15px;
     text-align: left;
-}
-
-.form-group label {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Input fields */
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  .form-group label {
     display: block;
+    margin-bottom: 6px;
     font-size: 14px;
-    font-weight: bold;
-}
-
-.form-group input {
+    font-weight: 500;
+    color: #ffffff;
+  }
+  
+  .form-group input {
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    /* border: 1px solid #ddd; */
-    font-size: 16px;
-}
-
-/* Login button */
-button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.5);  /* <<< Changed to dark transparent */
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  .form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  /* Login button */
+  .login-btn {
     width: 100%;
-    background: #007bff;
-    color: white;
-    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 12px;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
     cursor: pointer;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-/* Sign-up text */
-.signup-link {
-    margin-top: 10px;
-    color: white; /* Make "Don't have an account?" white */
+    transition: background 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Sign-up link */
+  .signup-link {
+    margin-top: 18px;
     font-size: 14px;
-}
-
-/* Sign-up link */
-.signup-link a {
-    color: #007bff; /* Keep Sign Up link blue */
+    color: #ffffff;
+  }
+  
+  .signup-link a {
+    color: #00bfff;
     text-decoration: none;
     font-weight: bold;
-}
-
-.signup-link a:hover {
+  }
+  
+  .signup-link a:hover {
     text-decoration: underline;
-}
+  }
+  

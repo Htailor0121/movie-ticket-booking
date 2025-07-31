@@ -12,8 +12,8 @@ const HomePage = () => {
                     <li><Link to="/movies">Movies</Link></li>
                     <li><a href="/contact">Contact Us</a></li>
                     <li><a href="/about">About Us</a></li>
-                    <li><Link to="/signup">Sign Up</Link></li>
-                    <li><Link to="/login">Login</Link></li>
+                    <li><Link to="/signup" className="nav-button">Sign Up</Link></li>
+                    <li><Link to="/login" className="nav-button">Login</Link></li>
                 </ul>
             </nav>
             <header className="hero-section">
