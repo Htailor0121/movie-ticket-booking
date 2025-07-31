@@ -36,27 +36,5 @@
     transform: rotate(360deg);
   }
 }
-/* MUI form container */
-.MuiFormControl-root {
-  background: rgba(255, 255, 255, 0); /* fully transparent */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-}
 
-/* MUI input field */
-.MuiInputBase-root {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: white !important;
-  border-radius: 8px;
-}
 
-/* Placeholder text */
-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* MUI label text */
-.MuiInputLabel-root {
-  color: white !important;
-}
