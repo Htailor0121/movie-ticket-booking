@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { movies } from './moviesData'; // Ensure this matches the file name
+import movies from './moviesData'; // ✅ CORRECT
 import './MoviesPage.css';
 
 const MoviesPage = () => {
