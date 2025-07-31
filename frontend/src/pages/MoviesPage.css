@@ -1,8 +1,9 @@
 .movies-page {
     padding: 20px; /* Padding around the page */
-    background-color: #f4f4f4; /* Light background color */
+    /* background-color: #f4f4f4; Light background color */
     text-align: center; /* Center align text */
     font-family: 'Arial', sans-serif; /* Ensure a clean, modern font */
+    
 }
 
 h2 {
@@ -19,13 +20,14 @@ h2 {
 }
 
 .movie-card {
-    background-color: rgb(0, 0, 0); /* Card background color */
+    /* background-color: rgb(0, 0, 0); Card background color */
     border: 1px solid #ddd; /* Light border around cards */
     border-radius: 10px; /* Slightly more rounded corners */
     padding: 20px; /* More padding inside the card */
     transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
     cursor: pointer; /* Change cursor to pointer on hover */
     text-align: center; /* Center align content */
+    backdrop-filter: blur(25px);
 }
 
 .movie-card:hover {

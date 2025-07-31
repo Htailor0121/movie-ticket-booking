@@ -27,8 +27,7 @@ import {
   Movie as MovieIcon,
   LocationOn,
   Phone,
-  Email,
-  CalendarToday
+  Email
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -44,6 +43,13 @@ const Profile = () => {
     phone: user?.phone || '',
     city: user?.city || ''
   });
+
+  const [bookingHistory, setBookingHistory] = useState([]);
+
+  useEffect(() => {
+    const storedBookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    setBookingHistory(storedBookings.reverse());
+  }, []);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -76,28 +82,6 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
-  // Mock booking history data
-  const bookingHistory = [
-    {
-      id: 1,
-      movie: 'The Avengers',
-      theater: 'PVR Cinemas',
-      date: '2024-03-15',
-      time: '19:00',
-      seats: ['A1', 'A2'],
-      status: 'Completed'
-    },
-    {
-      id: 2,
-      movie: 'Inception',
-      theater: 'INOX',
-      date: '2024-03-20',
-      time: '15:45',
-      seats: ['B3', 'B4'],
-      status: 'Upcoming'
-    }
-  ];
 
   return (
     <Container maxWidth="lg" sx={{ mt: 8, mb: 6 }}>
@@ -181,43 +165,51 @@ const Profile = () => {
             <Typography variant="h6" gutterBottom>
               Booking History
             </Typography>
-            <List>
-              {bookingHistory.map((booking) => (
-                <React.Fragment key={booking.id}>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <MovieIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={booking.movie}
-                      secondary={
-                        <Box>
-                          <Typography component="span" variant="body2">
-                            {booking.theater}
-                          </Typography>
-                          <br />
-                          <Typography component="span" variant="body2">
-                            {booking.date} at {booking.time}
-                          </Typography>
-                          <br />
-                          <Typography component="span" variant="body2">
-                            Seats: {booking.seats.join(', ')}
-                          </Typography>
-                        </Box>
-                      }
-                    />
-                    <Chip
-                      label={booking.status}
-                      color={booking.status === 'Completed' ? 'success' : 'primary'}
-                      size="small"
-                    />
-                  </ListItem>
-                  <Divider variant="inset" component="li" />
-                </React.Fragment>
-              ))}
-            </List>
+            {bookingHistory.length === 0 ? (
+              <Typography>No bookings yet.</Typography>
+            ) : (
+              <List>
+                {bookingHistory.map((booking, index) => (
+                  <React.Fragment key={index}>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar>
+                          <MovieIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={booking.movieTitle}
+                        secondary={
+                          <Box>
+                            <Typography variant="body2">
+                              Time: {booking.selectedTime}
+                            </Typography>
+                            <Typography variant="body2">
+                              Seats: {booking.selectedSeats?.join(', ') || 'N/A'}
+                            </Typography>
+                            <Typography variant="body2">
+                              Payment Method: {booking.method}
+                            </Typography>
+                            <Typography variant="body2">
+                              Total Paid: ₹{booking.totalPrice}
+                            </Typography>
+                            <Typography variant="body2">
+                              Booked On: {booking.date}
+                            </Typography>
+                          </Box>
+                        }
+                      />
+                      <Chip
+                        label="Completed"
+                        color="success"
+                        size="small"
+                      />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </React.Fragment>
+                ))}
+              </List>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -287,4 +279,4 @@ const Profile = () => {
   );
 };
 
-export default Profile; 
+export default Profile;

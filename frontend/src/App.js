@@ -35,9 +35,9 @@ function App() {
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/bookings" element={<Bookings />} />
-                    <Route path="/payment/:bookingId" element={<PaymentPage />} />
+                    <Route path="/payment" element={<PaymentPage />} />
                     <Route path="/booking/:showId" element={<BookingPage />} />
-                    <Route path="/seat-selection/:movieId/:showId" element={<SeatSelection />} />
+                    <Route path="/seat-selection/:movieId" element={<SeatSelection />} />
                     {/* <Route path="/profile" element={<Profile />} /> */}
                 </Routes>
                 <ToastContainer

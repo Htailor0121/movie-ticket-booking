@@ -7,7 +7,7 @@ const api = axios.create({
   },
 });
 
-// Add a request interceptor to add the auth token to requests
+// Automatically attach JWT token to every request if present
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -16,34 +16,51 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Auth endpoints
-export const login = (email, password) => api.post('/login', { email, password });
-export const signup = (userData) => api.post('/signup', userData);
-export const getCurrentUser = () => api.get('/users/me');
+// ---------------------- AUTH ---------------------- //
+export const login = (email, password) =>
+  api.post('/login', { email, password });
 
-// Movie endpoints
-export const getMovies = () => api.get('/movies');
-export const getMovieById = (id) => api.get(`/movies/${id}`);
-export const getShowsByMovie = (movieId) => api.get(`/shows/movie/${movieId}`);
+export const signup = (userData) =>
+  api.post('/signup', userData);
 
-// Show endpoints
-export const getShowById = (id) => api.get(`/shows/${id}`);
-export const lockSeats = (showId, seatNumbers) => 
+export const getCurrentUser = () =>
+  api.get('/users/me');
+
+// ---------------------- MOVIES ---------------------- //
+export const getMovies = () =>
+  api.get('/movies');
+
+export const getMovieById = (id) =>
+  api.get(`/movies/${id}`);
+
+export const getShowsByMovie = (movieId) =>
+  api.get(`/shows/movie/${movieId}`);
+
+// ---------------------- SHOWS ---------------------- //
+export const getShowById = (id) =>
+  api.get(`/shows/${id}`);
+
+export const lockSeats = (showId, seatNumbers) =>
   api.post(`/shows/${showId}/lock-seats`, { seat_numbers: seatNumbers });
-export const unlockSeats = (showId, seatNumbers) => 
+
+export const unlockSeats = (showId, seatNumbers) =>
   api.post(`/shows/${showId}/unlock-seats`, { seat_numbers: seatNumbers });
 
-// Booking endpoints
-export const createBooking = (bookingData) => api.post('/bookings', bookingData);
-export const getBookings = () => api.get('/bookings');
-export const getBookingById = (id) => api.get(`/bookings/${id}`);
+// ---------------------- BOOKINGS ---------------------- //
+export const createBooking = (bookingData) =>
+  api.post('/bookings', bookingData);
 
-// User endpoints
-export const updateUser = (userData) => api.put('/users/me', userData);
+export const getBookings = () =>
+  api.get('/bookings');
 
-export default api; 
+export const getBookingById = (id) =>
+  api.get(`/bookings/${id}`);
+
+// ---------------------- USERS ---------------------- //
+export const updateUser = (userData) =>
+  api.put('/users/me', userData);
+
+export default api;

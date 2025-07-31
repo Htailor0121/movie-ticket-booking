@@ -10,12 +10,12 @@ const HomePage = () => {
                 <ul className="nav-links">
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/movies">Movies</Link></li>
-                    {/* <li><a href="/contact">Contact Us</a></li> */}
-                    <li><a href="/profile">Profile </a></li>
+                    <li><Link to="/profile">Profile</Link></li>
                     <li><Link to="/signup" className="nav-button">Sign Up</Link></li>
                     <li><Link to="/login" className="nav-button">Login</Link></li>
                 </ul>
             </nav>
+
             <header className="hero-section">
                 <div className="hero-content">
                     <h1>Book Your Favorite Movies Now!</h1>
@@ -23,6 +23,7 @@ const HomePage = () => {
                     <Link to="/movies" className="btn">View Movies</Link>
                 </div>
             </header>
+
             <footer className="footer">
                 <p>&copy; 2024 Movie Ticket Booking. All Rights Reserved.</p>
             </footer>

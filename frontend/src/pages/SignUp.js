@@ -9,6 +9,7 @@ const SignUp = () => {
         password: '',
         confirmPassword: ''
     });
+
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
@@ -25,38 +26,67 @@ const SignUp = () => {
 
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
-        } else {
-            setErrorMessage('');
-
-            // Store user credentials (TEMPORARY: Should be done via backend API)
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userPassword", password);
-
-            alert('Sign-up successful! Redirecting to Login...');
-            navigate('/login'); // Redirect to login page
+            return;
         }
+
+        setErrorMessage('');
+
+        // TEMPORARY: Store credentials in localStorage
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPassword", password);
+
+        alert('Sign-up successful! Redirecting to Login...');
+        navigate('/login');
     };
 
     return (
         <div className="signup-container">
-            <h2>Sign Up</h2>
+            <h2 className="signup-title">Sign Up</h2>
             {errorMessage && <p className="error">{errorMessage}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+                    <label htmlFor="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
                 <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
                 <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
                 <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
                 <button type="submit">Sign Up</button>
             </form>
