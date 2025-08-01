@@ -21,13 +21,11 @@ const Payment = () => {
     const [paymentSuccess, setPaymentSuccess] = useState(null);
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [cardDetails, setCardDetails] = useState({ cardNumber: '', expiry: '', cvv: '' });
-    const [cardErrors, setCardErrors] = useState({ cardNumber: '', expiry: '', cvv: '' }); // Validation errors for card details
+    const [cardErrors, setCardErrors] = useState({ cardNumber: '', expiry: '', cvv: '' });
     const [upiId, setUpiId] = useState('');
-    const [upiError, setUpiError] = useState(''); // State for UPI ID error
-    const [isModalOpen, setModalOpen] = useState(false);
+    const [upiError, setUpiError] = useState('');
 
     useEffect(() => {
-        // Get booking data from localStorage
         const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
         const totalPrice = localStorage.getItem('totalPrice');
         const movieTitle = localStorage.getItem('movieTitle');
@@ -49,37 +47,38 @@ const Payment = () => {
 
     const handlePayment = (method) => {
         setSelectedMethod(method);
-        setUpiError(''); // Reset UPI error on method change
-        setModalOpen(true); // Open the modal
+        setPaymentSuccess(null);
+        setUpiError('');
+        setCardErrors({ cardNumber: '', expiry: '', cvv: '' });
+        setCardDetails({ cardNumber: '', expiry: '', cvv: '' });
+        setUpiId('');
     };
 
     const handleCardChange = (e) => {
         setCardDetails({ ...cardDetails, [e.target.name]: e.target.value });
-        setCardErrors({ ...cardErrors, [e.target.name]: '' }); // Clear the error when user starts typing
+        setCardErrors({ ...cardErrors, [e.target.name]: '' });
     };
 
     const handleUpiChange = (e) => {
         setUpiId(e.target.value);
+        setUpiError('');
     };
 
     const validateCardDetails = () => {
         let errors = {};
         let isValid = true;
 
-        // Validate card number
         if (!cardDetails.cardNumber || cardDetails.cardNumber.length < 16) {
             errors.cardNumber = 'Please enter a valid 16-digit card number.';
             isValid = false;
         }
 
-        // Validate expiry date
-        const expiryRegex = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/; // Format: MM/YY
+        const expiryRegex = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/;
         if (!cardDetails.expiry || !expiryRegex.test(cardDetails.expiry)) {
             errors.expiry = 'Please enter a valid expiry date (MM/YY).';
             isValid = false;
         }
 
-        // Validate CVV
         if (!cardDetails.cvv || cardDetails.cvv.length < 3 || cardDetails.cvv.length > 4) {
             errors.cvv = 'Please enter a valid CVV.';
             isValid = false;
@@ -89,10 +88,7 @@ const Payment = () => {
         return isValid;
     };
 
-    const validateUpiId = (id) => {
-        const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/; // Basic UPI ID regex
-        return upiRegex.test(id);
-    };
+    const validateUpiId = (id) => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/.test(id);
 
     const processPayment = async () => {
         if (!user) {
@@ -109,44 +105,24 @@ const Payment = () => {
         setLoading(true);
         setPaymentSuccess(null);
 
-        // Validate card details if selected method is card-based
-        if (selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card') {
-            if (!validateCardDetails()) {
-                setLoading(false);
-                return;
-            }
+        if ((selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card') && !validateCardDetails()) {
+            setLoading(false);
+            return;
         }
 
-        // Validate UPI ID if using Google Pay or PayPal
-        if (selectedMethod === 'Google Pay' || selectedMethod === 'PayPal') {
-            if (!validateUpiId(upiId)) {
-                setLoading(false);
-                setUpiError('Please enter a valid UPI ID.');
-                return;
-            }
+        if ((selectedMethod === 'Google Pay' || selectedMethod === 'PayPal') && !validateUpiId(upiId)) {
+            setLoading(false);
+            setUpiError('Please enter a valid UPI ID.');
+            return;
         }
 
         try {
-            // Create the booking
             await createBooking(bookingData);
-            
-            // Clear localStorage
-            localStorage.removeItem('selectedSeats');
-            localStorage.removeItem('totalPrice');
-            localStorage.removeItem('movieTitle');
-            localStorage.removeItem('showId');
-            
+            localStorage.clear();
             setLoading(false);
             setPaymentSuccess(`Booking successful! Payment completed using ${selectedMethod}.`);
-            setModalOpen(false);
-            
             toast.success('Booking created successfully!');
-            
-            // Redirect to bookings page after 2 seconds
-            setTimeout(() => {
-                navigate('/bookings');
-            }, 2000);
-            
+            setTimeout(() => navigate('/bookings'), 2000);
         } catch (error) {
             setLoading(false);
             toast.error(error.response?.data?.detail || 'Failed to create booking.');
@@ -154,21 +130,16 @@ const Payment = () => {
     };
 
     const handleCancel = () => {
-        setModalOpen(false); // Close modal when user clicks "Cancel"
-        setSelectedMethod(null); // Reset selected method
-        setCardDetails({ cardNumber: '', expiry: '', cvv: '' }); // Clear card details
-        setUpiId(''); // Clear UPI ID
-        setUpiError(''); // Clear UPI error
-        setCardErrors({ cardNumber: '', expiry: '', cvv: '' }); // Clear card errors
-        setPaymentSuccess(null); // Reset success message
+        setSelectedMethod(null);
+        setCardDetails({ cardNumber: '', expiry: '', cvv: '' });
+        setUpiId('');
+        setUpiError('');
+        setCardErrors({ cardNumber: '', expiry: '', cvv: '' });
+        setPaymentSuccess(null);
     };
 
     if (!bookingData) {
-        return (
-            <div className="payment">
-                <h2>Loading booking details...</h2>
-            </div>
-        );
+        return <div className="payment"><h2>Loading booking details...</h2></div>;
     }
 
     return (
@@ -190,69 +161,62 @@ const Payment = () => {
                 ))}
             </div>
 
-            {/* Modal for payment options */}
-            <Modal isOpen={isModalOpen} onClose={handleCancel}>
-                {loading && <p>Processing your payment... Please wait.</p>}
-                {paymentSuccess && <p className="success">{paymentSuccess}</p>}
-                {upiError && <p className="error">{upiError}</p>}
+            {selectedMethod && (
+                <div className="payment-form">
+                    <h4>{selectedMethod} Details</h4>
+                    {loading && <p>Processing your payment... Please wait.</p>}
+                    {paymentSuccess && <p className="success">{paymentSuccess}</p>}
+                    {upiError && <p className="error">{upiError}</p>}
 
-                {selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card' ? (
-                    <div className="card-details">
-                        <h4>Enter Card Details</h4>
-                        <input
-                            type="text"
-                            name="cardNumber"
-                            placeholder="Card Number"
-                            value={cardDetails.cardNumber}
-                            onChange={handleCardChange}
-                            required
-                        />
-                        {cardErrors.cardNumber && <p className="error">{cardErrors.cardNumber}</p>}
-                        
-                        <input
-                            type="text"
-                            name="expiry"
-                            placeholder="MM/YY"
-                            value={cardDetails.expiry}
-                            onChange={handleCardChange}
-                            required
-                        />
-                        {cardErrors.expiry && <p className="error">{cardErrors.expiry}</p>}
+                    {(selectedMethod === 'Credit Card' || selectedMethod === 'Debit Card') && (
+                        <>
+                            <input
+                                type="text"
+                                name="cardNumber"
+                                placeholder="Card Number"
+                                value={cardDetails.cardNumber}
+                                onChange={handleCardChange}
+                            />
+                            {cardErrors.cardNumber && <p className="error">{cardErrors.cardNumber}</p>}
 
-                        <input
-                            type="text"
-                            name="cvv"
-                            placeholder="CVV"
-                            value={cardDetails.cvv}
-                            onChange={handleCardChange}
-                            required
-                        />
-                        {cardErrors.cvv && <p className="error">{cardErrors.cvv}</p>}
+                            <input
+                                type="text"
+                                name="expiry"
+                                placeholder="MM/YY"
+                                value={cardDetails.expiry}
+                                onChange={handleCardChange}
+                            />
+                            {cardErrors.expiry && <p className="error">{cardErrors.expiry}</p>}
+
+                            <input
+                                type="text"
+                                name="cvv"
+                                placeholder="CVV"
+                                value={cardDetails.cvv}
+                                onChange={handleCardChange}
+                            />
+                            {cardErrors.cvv && <p className="error">{cardErrors.cvv}</p>}
+                        </>
+                    )}
+
+                    {(selectedMethod === 'Google Pay' || selectedMethod === 'PayPal') && (
+                        <>
+                            <input
+                                type="text"
+                                placeholder="Enter your UPI ID"
+                                value={upiId}
+                                onChange={handleUpiChange}
+                            />
+                            {upiError && <p className="error">{upiError}</p>}
+                        </>
+                    )}
+
+                    <div className="modal-actions">
+                        <button onClick={processPayment} className="pay-button" disabled={loading}>Pay Now</button>
+                        <button onClick={handleCancel} className="cancel-button">Cancel</button>
                     </div>
-                ) : selectedMethod === 'Google Pay' || selectedMethod === 'PayPal' ? (
-                    <div className="upi-details">
-                        <h4>Enter UPI ID</h4>
-                        <input
-                            type="text"
-                            placeholder="Enter your UPI ID"
-                            value={upiId}
-                            onChange={handleUpiChange}
-                            required
-                        />
-                    </div>
-                ) : null}
-
-                <div className="modal-actions">
-                    <button
-                        onClick={processPayment}
-                        className="pay-button"
-                        disabled={loading} // Disable button while processing
-                    >
-                        Pay Now
-                    </button>
-                    <button onClick={handleCancel} className="cancel-button">Cancel</button>
                 </div>
-            </Modal>
+            )}
         </div>
     );
 };
