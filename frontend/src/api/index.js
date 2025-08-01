@@ -20,14 +20,22 @@ api.interceptors.request.use(
 );
 
 // ---------------------- AUTH ---------------------- //
-export const login = (email, password) =>
-  api.post('/login', { email, password });
+export const login = (email, password) => {
+  const formData = new URLSearchParams();
+  formData.append('username', email); // OAuth2 expects 'username' field
+  formData.append('password', password);
+  return api.post('/auth/login', formData, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+};
 
 export const signup = (userData) =>
-  api.post('/signup', userData);
+  api.post('/auth/signup', userData);
 
 export const getCurrentUser = () =>
-  api.get('/users/me');
+  api.get('/auth/users/me');
 
 // ---------------------- MOVIES ---------------------- //
 export const getMovies = () =>
@@ -61,6 +69,6 @@ export const getBookingById = (id) =>
 
 // ---------------------- USERS ---------------------- //
 export const updateUser = (userData) =>
-  api.put('/users/me', userData);
+  api.put('/auth/users/me', userData);
 
 export default api;
