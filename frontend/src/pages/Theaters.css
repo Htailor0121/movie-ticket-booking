@@ -7,7 +7,7 @@
 
 .theaters-page h2 {
     text-align: center;
-    color: #333;
+    color: #fffdfd;
     margin-bottom: 30px;
     font-size: 2.5rem;
 }
@@ -35,7 +35,7 @@
 
 .theater-item {
     padding: 15px;
-    border: 2px solid #000000;
+    border: 2px solid #fbfbfb;
     border-radius: 8px;
     margin-bottom: 15px;
     cursor: pointer;
