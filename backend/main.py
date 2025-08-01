@@ -6,6 +6,9 @@ from database import engine
 from models import Base
 import os
 from datetime import datetime
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from database import get_db
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -53,7 +56,13 @@ def health_check():
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat()
     }
-
+@app.get("/db-check")
+def db_check(db: Session = Depends(get_db)):
+    try:
+        db.execute("SELECT 1")
+        return {"status": "connected"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
