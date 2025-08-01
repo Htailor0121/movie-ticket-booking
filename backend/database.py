@@ -20,12 +20,15 @@ elif DATABASE_URL and DATABASE_URL.startswith('mysql://'):
 elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
     # Already in correct format for pymysql
     pass
+elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
+    # Already in correct format for pymysql
+    pass
 else:
     # MySQL connection string with individual environment variables
     password = quote_plus(os.getenv('MYSQL_PASSWORD', ''))
     DATABASE_URL = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{password}@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

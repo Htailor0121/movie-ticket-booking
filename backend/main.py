@@ -5,6 +5,7 @@ from routes import auth, movies, theaters, shows, bookings
 from database import engine
 from models import Base
 import os
+from datetime import datetime
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -41,8 +42,16 @@ app.include_router(bookings.router)
 def home():
     return {
         "message": "Welcome to the Movie Ticket Booking API",
+        "status": "healthy",
         "docs_url": "/docs",
         "redoc_url": "/redoc"
+    }
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat()
     }
 
 if __name__ == "__main__":
