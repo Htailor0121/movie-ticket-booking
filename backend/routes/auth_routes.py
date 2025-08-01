@@ -17,10 +17,15 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/signup", response_model=UserSchema)
 def signup(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered"
+        )
     
+    # Create new user
     hashed_password = get_password_hash(user.password)
     now = datetime.utcnow()
     db_user = User(
@@ -51,7 +56,10 @@ def login(
         )
     
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Inactive user"
+        )
     
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -59,6 +67,7 @@ def login(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Add missing user endpoints
 @router.get("/users/me", response_model=UserSchema)
 def get_current_user_info(current_user: User = Depends(get_current_active_user)):
     return current_user
@@ -69,6 +78,7 @@ def update_user_info(
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
+    # Update user fields
     for field, value in user_update.dict(exclude_unset=True).items():
         setattr(current_user, field, value)
     
@@ -76,12 +86,3 @@ def update_user_info(
     db.commit()
     db.refresh(current_user)
     return current_user 
-
-# ✅ Admin-only dependency
-def get_admin_user(current_user: User = Depends(get_current_active_user)):
-    if not current_user.is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to perform this action"
-        )
-    return current_user
