@@ -9,7 +9,7 @@ from urllib.parse import quote_plus
 load_dotenv()
 
 # Check if we're using PostgreSQL (Render) or MySQL
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv('mysql://root:bROiSjvYcsejjOLgChUdodjlInzlxqLx@mysql.railway.internal:3306/railway')
 
 if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
     # Convert postgres:// to postgresql:// for SQLAlchemy
@@ -22,8 +22,8 @@ elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
     pass
 else:
     # MySQL connection string with individual environment variables
-    password = quote_plus(os.getenv('MYSQL_PASSWORD', ''))
-    DATABASE_URL = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{password}@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
+    password = quote_plus(os.getenv('bROiSjvYcsejjOLgChUdodjlInzlxqLx', ''))
+    DATABASE_URL = f"mysql+pymysql://{os.getenv('root')}:{password}@{os.getenv('mysql.railway.internal')}/{os.getenv('railway')}"
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
