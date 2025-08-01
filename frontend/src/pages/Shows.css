@@ -115,10 +115,10 @@ line-height: 1.5;
 letter-spacing: 0.00938em;
 }
 .show-card {
-    background: white;
+    background: rgb(0, 0, 0);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(141, 140, 140, 0.1);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -140,13 +140,13 @@ letter-spacing: 0.00938em;
 
 .show-info h4 {
     margin: 0 0 10px 0;
-    color: #333;
+    color: white;
     font-size: 1.2rem;
 }
 
 .show-info p {
     margin: 6px 0;
-    color: #666;
+    color: white;
     font-size: 0.9rem;
 }
 
