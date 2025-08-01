@@ -3,31 +3,26 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
+from urllib.parse import quote_plus
 
-# Load environment variables from .env file (only useful in local dev)
+# Load environment variables from .env file
 load_dotenv()
 
-# Get the connection string from environment variables
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Build the connection string
+user = os.getenv('MYSQL_USER')
+password = quote_plus(os.getenv('MYSQL_PASSWORD', ''))
+host = os.getenv('MYSQL_HOST')
+port = os.getenv('MYSQL_PORT')
+database = os.getenv('MYSQL_DB')
 
-# Raise error if not set
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set in environment variables")
+DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
 
-# Adjust protocol for SQLAlchemy if needed
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-elif DATABASE_URL.startswith("mysql://"):
-    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
-
-# Set up the SQLAlchemy engine and session
+# SQLAlchemy setup
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Base model for SQLAlchemy
 Base = declarative_base()
 
-# Dependency to get DB session in FastAPI
+# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
