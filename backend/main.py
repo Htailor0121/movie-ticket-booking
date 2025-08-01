@@ -9,6 +9,7 @@ from datetime import datetime
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from database import get_db
+from sqlalchemy import text
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -59,7 +60,7 @@ def health_check():
 @app.get("/db-check")
 def db_check(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "connected"}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
