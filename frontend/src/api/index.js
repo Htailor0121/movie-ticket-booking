@@ -44,18 +44,31 @@ export const getMovies = () =>
 export const getMovieById = (id) =>
   api.get(`/movies/${id}`);
 
+// ---------------------- SHOWS ---------------------- //
+export const getShows = () =>
+  api.get('/shows');
+
+export const getShowById = (id) =>
+  api.get(`/shows/${id}`);
+
 export const getShowsByMovie = (movieId) =>
   api.get(`/shows/movie/${movieId}`);
 
-// ---------------------- SHOWS ---------------------- //
-export const getShowById = (id) =>
-  api.get(`/shows/${id}`);
+export const getShowsByTheater = (theaterId) =>
+  api.get(`/shows/theater/${theaterId}`);
 
 export const lockSeats = (showId, seatNumbers) =>
   api.post(`/shows/${showId}/lock-seats`, { seat_numbers: seatNumbers });
 
 export const unlockSeats = (showId, seatNumbers) =>
   api.post(`/shows/${showId}/unlock-seats`, { seat_numbers: seatNumbers });
+
+// ---------------------- THEATERS ---------------------- //
+export const getTheaters = () =>
+  api.get('/theaters');
+
+export const getTheaterById = (id) =>
+  api.get(`/theaters/${id}`);
 
 // ---------------------- BOOKINGS ---------------------- //
 export const createBooking = (bookingData) =>

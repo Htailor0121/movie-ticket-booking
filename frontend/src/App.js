@@ -13,12 +13,12 @@ import Movies from './pages/MoviesPage';
 import MovieDetail from './pages/MovieDetails';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-// import Profile from './pages/AboutUs';        // Temporary substitute for Profile
-import Bookings from './pages/ContactUs';     // Temporary substitute for Bookings
+import Bookings from './pages/Bookings';
 import PaymentPage from './pages/Payment';
-import BookingPage from './pages/Modal';      // Temporary substitute for BookingPage
 import SeatSelection from './pages/SeatSelection';
 import Profile from './pages/Profile';
+import Theaters from './pages/Theaters';
+import Shows from './pages/Shows';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -36,9 +36,9 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/bookings" element={<Bookings />} />
                     <Route path="/payment" element={<PaymentPage />} />
-                    <Route path="/booking/:showId" element={<BookingPage />} />
                     <Route path="/seat-selection/:movieId" element={<SeatSelection />} />
-                    {/* <Route path="/profile" element={<Profile />} /> */}
+                    <Route path="/theaters" element={<Theaters />} />
+                    <Route path="/shows" element={<Shows />} />
                 </Routes>
                 <ToastContainer
                     position="top-right"

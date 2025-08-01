@@ -1,6 +1,48 @@
 .seat-selection {
     text-align: center;
     color: white;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .show-selection {
+    margin: 20px 0;
+  }
+
+  .show-selection h3 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .shows-grid {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .show-option {
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    color: #333;
+  }
+
+  .show-option:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+  }
+
+  .show-option.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
   }
   
   .screen {

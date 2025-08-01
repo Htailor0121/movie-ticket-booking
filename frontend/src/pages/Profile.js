@@ -30,6 +30,7 @@ import {
   Email
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { getBookings } from '../api';
 import { toast } from 'react-toastify';
 
 const Profile = () => {
@@ -47,9 +48,19 @@ const Profile = () => {
   const [bookingHistory, setBookingHistory] = useState([]);
 
   useEffect(() => {
-    const storedBookings = JSON.parse(localStorage.getItem('bookings')) || [];
-    setBookingHistory(storedBookings.reverse());
-  }, []);
+    if (user) {
+      fetchBookingHistory();
+    }
+  }, [user]);
+
+  const fetchBookingHistory = async () => {
+    try {
+      const response = await getBookings();
+      setBookingHistory(response.data);
+    } catch (error) {
+      console.error('Failed to fetch booking history:', error);
+    }
+  };
 
   const handleOpenDialog = () => {
     setOpenDialog(true);

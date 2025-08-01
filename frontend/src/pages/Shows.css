@@ -1,0 +1,201 @@
+.shows-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 80vh;
+}
+
+.shows-page h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+}
+
+.filters-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filters-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filters select,
+.filters input {
+    padding: 10px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    min-width: 150px;
+    background: white;
+}
+
+.filters select:focus,
+.filters input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.clear-filters {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.clear-filters:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.shows-results h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.no-shows {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.no-shows p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.no-shows button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.no-shows button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.shows-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.show-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.show-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.show-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.show-info {
+    padding: 20px;
+}
+
+.show-info h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.show-info p {
+    margin: 6px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.show-info .genre {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.show-info .theater {
+    font-weight: 600;
+    color: #333;
+}
+
+.show-info .location {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.show-info .time {
+    color: #333;
+    font-weight: 600;
+}
+
+.show-info .price {
+    color: #28a745;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.show-info .seats {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters select,
+    .filters input {
+        min-width: auto;
+    }
+    
+    .shows-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .show-card {
+        margin: 0 10px;
+    }
+} 

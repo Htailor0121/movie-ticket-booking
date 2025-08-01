@@ -20,9 +20,6 @@ elif DATABASE_URL and DATABASE_URL.startswith('mysql://'):
 elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
     # Already in correct format for pymysql
     pass
-elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
-    # Already in correct format for pymysql
-    pass
 else:
     # MySQL connection string with individual environment variables
     password = quote_plus(os.getenv('MYSQL_PASSWORD', ''))

@@ -20,7 +20,11 @@ const HomePage = () => {
                 <div className="hero-content">
                     <h1>Book Your Favorite Movies Now!</h1>
                     <p>Find the latest movies and book your tickets online with ease.</p>
-                    <Link to="/movies" className="btn">View Movies</Link>
+                    <div className="hero-buttons">
+                        <Link to="/movies" className="btn">View Movies</Link>
+                        <Link to="/theaters" className="btn">Our Theaters</Link>
+                        <Link to="/shows" className="btn">All Shows</Link>
+                    </div>
                 </div>
             </header>
 

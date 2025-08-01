@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Modal from './Modal'; // Import the Modal component
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createBooking } from '../api';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 import './Payment.css';
 
 const Payment = () => {
-    const { movieTitle, selectedTime, totalPrice } = useParams();
-    const decodedMovieTitle = decodeURIComponent(movieTitle);
+    const navigate = useNavigate();
+    const { user } = useAuth();
+    const [bookingData, setBookingData] = useState(null);
 
     const paymentMethods = [
         { name: 'Credit Card', img: 'https://img.freepik.com/free-vector/black-credit-card_1017-6276.jpg?size=338&ext=jpg&ga=GA1.1.1887574231.1729036800&semt=ais_hybrid' },
@@ -21,7 +24,28 @@ const Payment = () => {
     const [cardErrors, setCardErrors] = useState({ cardNumber: '', expiry: '', cvv: '' }); // Validation errors for card details
     const [upiId, setUpiId] = useState('');
     const [upiError, setUpiError] = useState(''); // State for UPI ID error
-    const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    useEffect(() => {
+        // Get booking data from localStorage
+        const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+        const totalPrice = localStorage.getItem('totalPrice');
+        const movieTitle = localStorage.getItem('movieTitle');
+        const showId = localStorage.getItem('showId');
+
+        if (!selectedSeats.length || !totalPrice || !showId) {
+            toast.error('Invalid booking data. Please select seats again.');
+            navigate('/movies');
+            return;
+        }
+
+        setBookingData({
+            show_id: parseInt(showId),
+            num_seats: selectedSeats.length,
+            total_amount: parseFloat(totalPrice),
+            seat_numbers: selectedSeats
+        });
+    }, [navigate]);
 
     const handlePayment = (method) => {
         setSelectedMethod(method);
@@ -70,7 +94,18 @@ const Payment = () => {
         return upiRegex.test(id);
     };
 
-    const processPayment = () => {
+    const processPayment = async () => {
+        if (!user) {
+            toast.error('Please log in to make a booking.');
+            navigate('/login');
+            return;
+        }
+
+        if (!bookingData) {
+            toast.error('No booking data available.');
+            return;
+        }
+
         setLoading(true);
         setPaymentSuccess(null);
 
@@ -91,12 +126,31 @@ const Payment = () => {
             }
         }
 
-        // Simulate a payment process
-        setTimeout(() => {
+        try {
+            // Create the booking
+            await createBooking(bookingData);
+            
+            // Clear localStorage
+            localStorage.removeItem('selectedSeats');
+            localStorage.removeItem('totalPrice');
+            localStorage.removeItem('movieTitle');
+            localStorage.removeItem('showId');
+            
             setLoading(false);
-            setPaymentSuccess(`You have successfully completed the payment using ${selectedMethod}.`);
-            setModalOpen(false); // Close modal on success
-        }, 2000);
+            setPaymentSuccess(`Booking successful! Payment completed using ${selectedMethod}.`);
+            setModalOpen(false);
+            
+            toast.success('Booking created successfully!');
+            
+            // Redirect to bookings page after 2 seconds
+            setTimeout(() => {
+                navigate('/bookings');
+            }, 2000);
+            
+        } catch (error) {
+            setLoading(false);
+            toast.error(error.response?.data?.detail || 'Failed to create booking.');
+        }
     };
 
     const handleCancel = () => {
@@ -109,11 +163,23 @@ const Payment = () => {
         setPaymentSuccess(null); // Reset success message
     };
 
+    if (!bookingData) {
+        return (
+            <div className="payment">
+                <h2>Loading booking details...</h2>
+            </div>
+        );
+    }
+
     return (
         <div className="payment">
-            <h2>Select Payment Method for {decodedMovieTitle}</h2>
-            <h3>Total Amount: ₹{totalPrice}</h3>
-            <h4>Selected Time: {selectedTime}</h4>
+            <h2>Select Payment Method</h2>
+            <div className="booking-summary">
+                <h3>Booking Summary</h3>
+                <p><strong>Movie:</strong> {localStorage.getItem('movieTitle')}</p>
+                <p><strong>Seats:</strong> {bookingData.seat_numbers.join(', ')}</p>
+                <p><strong>Total Amount:</strong> ₹{bookingData.total_amount}</p>
+            </div>
 
             <div className="payment-methods">
                 {paymentMethods.map((method, index) => (

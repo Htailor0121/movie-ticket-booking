@@ -23,7 +23,7 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import { getMovieById } from '../api/index';
+import { getMovieById, getShowsByMovie } from '../api/index';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
@@ -32,6 +32,7 @@ const MovieDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [movie, setMovie] = useState(null);
+  const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -45,8 +46,14 @@ const MovieDetail = () => {
 
   const fetchMovieDetails = async (isMounted) => {
     try {
-      const data = await getMovieById(id);
-      if (isMounted) setMovie(data);
+      const [movieData, showsData] = await Promise.all([
+        getMovieById(id),
+        getShowsByMovie(id)
+      ]);
+      if (isMounted) {
+        setMovie(movieData.data);
+        setShows(showsData.data);
+      }
       if (isMounted) setLoading(false);
     } catch (err) {
       if (isMounted) setError('Failed to fetch movie details. Please try again later.');
@@ -62,13 +69,20 @@ const MovieDetail = () => {
     setSelectedDate(date);
   };
 
-  const handleBookNow = (showId) => {
+  const handleBookNow = () => {
     if (!user) {
       toast.error('Please login to book tickets');
-      if (typeof window !== 'undefined') navigate('/login');
+      navigate('/login');
       return;
     }
-    if (typeof window !== 'undefined') navigate(`/movies/${id}/book/${showId}`);
+    navigate(`/seat-selection/${id}`);
+  };
+
+  const getShowsForDate = (date) => {
+    return shows.filter(show => {
+      const showDate = new Date(show.show_time);
+      return showDate.toDateString() === date.toDateString();
+    });
   };
 
   const dates = Array.from({ length: 7 }, (_, i) => {
@@ -204,53 +218,53 @@ const MovieDetail = () => {
             </Box>
 
             <Typography variant="h5" gutterBottom>
-              Select Showtime
+              Available Shows
             </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Theater</TableCell>
-                    <TableCell>Location</TableCell>
-                    <TableCell>Show Times</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {movie.theaters.map((theater) => (
-                    <TableRow key={theater.id}>
-                      <TableCell>{theater.name}</TableCell>
-                      <TableCell>{theater.location}</TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                          {theater.show_times.map((time) => (
-                            <Button
-                              key={time}
-                              variant="outlined"
-                              size="small"
-                              onClick={() => handleBookNow(time.id)}
-                            >
-                              {time}
-                            </Button>
-                          ))}
-                        </Box>
-                      </TableCell>
-                      <TableCell>₹{movie.price}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleBookNow(theater.show_times[0].id)}
-                        >
-                          Book Now
-                        </Button>
-                      </TableCell>
+            {getShowsForDate(selectedDate).length === 0 ? (
+              <Typography variant="body1" color="text.secondary">
+                No shows available for the selected date.
+              </Typography>
+            ) : (
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Theater</TableCell>
+                      <TableCell>Location</TableCell>
+                      <TableCell>Show Time</TableCell>
+                      <TableCell>Price</TableCell>
+                      <TableCell>Available Seats</TableCell>
+                      <TableCell>Action</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {getShowsForDate(selectedDate).map((show) => (
+                      <TableRow key={show.id}>
+                        <TableCell>{show.theater.name}</TableCell>
+                        <TableCell>{show.theater.location}</TableCell>
+                        <TableCell>
+                          {new Date(show.show_time).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </TableCell>
+                        <TableCell>₹{show.price}</TableCell>
+                        <TableCell>{show.available_seats}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleBookNow}
+                          >
+                            Book Now
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
           </Box>
         )}
 
