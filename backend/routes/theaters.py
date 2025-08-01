@@ -4,7 +4,7 @@ from typing import List
 from database import get_db
 from models import Theater
 from schemas import TheaterCreate, Theater as TheaterSchema
-from auth import get_current_active_user
+from auth import get_admin_user
 from models import User
 
 router = APIRouter(prefix="/theaters", tags=["Theaters"])
@@ -29,7 +29,7 @@ def get_theater(theater_id: int, db: Session = Depends(get_db)):
 def create_theater(
     theater: TheaterCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_theater = Theater(**theater.dict())
     db.add(db_theater)
@@ -42,7 +42,7 @@ def update_theater(
     theater_id: int,
     theater: TheaterCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_theater = db.query(Theater).filter(Theater.id == theater_id).first()
     if db_theater is None:
@@ -59,7 +59,7 @@ def update_theater(
 def delete_theater(
     theater_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_theater = db.query(Theater).filter(Theater.id == theater_id).first()
     if db_theater is None:

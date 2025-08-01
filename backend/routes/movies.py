@@ -4,7 +4,7 @@ from typing import List
 from database import get_db
 from models import Movie
 from schemas import MovieCreate, Movie as MovieSchema
-from auth import get_current_active_user
+from auth import get_admin_user
 from models import User
 
 router = APIRouter(prefix="/movies", tags=["Movies"])
@@ -29,7 +29,7 @@ def get_movie(movie_id: int, db: Session = Depends(get_db)):
 def create_movie(
     movie: MovieCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_movie = Movie(**movie.dict())
     db.add(db_movie)
@@ -42,7 +42,7 @@ def update_movie(
     movie_id: int,
     movie: MovieCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_movie = db.query(Movie).filter(Movie.id == movie_id).first()
     if db_movie is None:
@@ -59,7 +59,7 @@ def update_movie(
 def delete_movie(
     movie_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_movie = db.query(Movie).filter(Movie.id == movie_id).first()
     if db_movie is None:
@@ -67,4 +67,4 @@ def delete_movie(
     
     db.delete(db_movie)
     db.commit()
-    return {"message": "Movie deleted successfully"} 
+    return {"message": "Movie deleted successfully"}

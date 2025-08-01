@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from database import get_db
 from models import Show, Movie, Theater
 from schemas import ShowCreate, Show as ShowSchema, SeatLockRequest, SeatLockResponse
-from auth import get_current_active_user
+from auth import get_admin_user
 from models import User
 
 router = APIRouter(prefix="/shows", tags=["Shows"])
@@ -40,7 +40,7 @@ def get_shows_by_theater(theater_id: int, db: Session = Depends(get_db)):
 def create_show(
     show: ShowCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     # Check if movie exists
     movie = db.query(Movie).filter(Movie.id == show.movie_id).first()
@@ -83,7 +83,7 @@ def update_show(
     show_id: int,
     show: ShowCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_show = db.query(Show).filter(Show.id == show_id).first()
     if db_show is None:
@@ -121,7 +121,7 @@ def update_show(
 def delete_show(
     show_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_admin_user)
 ):
     db_show = db.query(Show).filter(Show.id == show_id).first()
     if db_show is None:
