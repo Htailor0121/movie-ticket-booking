@@ -4,12 +4,13 @@ from sqlalchemy.orm import Session
 from datetime import timedelta, datetime
 from database import get_db
 from models import User
-from schemas import UserCreate, User as UserSchema, Token
+from schemas import UserCreate, User as UserSchema, Token, UserUpdate
 from auth import (
     verify_password,
     get_password_hash,
     create_access_token,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    get_current_active_user
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -64,4 +65,24 @@ def login(
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"} 
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# Add missing user endpoints
+@router.get("/users/me", response_model=UserSchema)
+def get_current_user_info(current_user: User = Depends(get_current_active_user)):
+    return current_user
+
+@router.put("/users/me", response_model=UserSchema)
+def update_user_info(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    # Update user fields
+    for field, value in user_update.dict(exclude_unset=True).items():
+        setattr(current_user, field, value)
+    
+    current_user.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(current_user)
+    return current_user 

@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './SignUp.css';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        phone: '',
+        city: ''
     });
 
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { signup } = useAuth();
 
     const handleChange = (e) => {
         setFormData({
@@ -20,9 +25,9 @@ const SignUp = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const { email, password, confirmPassword } = formData;
+        const { name, email, password, confirmPassword, phone, city } = formData;
 
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
@@ -30,13 +35,28 @@ const SignUp = () => {
         }
 
         setErrorMessage('');
+        setLoading(true);
 
-        // TEMPORARY: Store credentials in localStorage
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("userPassword", password);
+        try {
+            const result = await signup({
+                name,
+                email,
+                password,
+                phone,
+                city
+            });
 
-        alert('Sign-up successful! Redirecting to Login...');
-        navigate('/login');
+            if (result.success) {
+                alert('Sign-up successful! Redirecting to Login...');
+                navigate('/login');
+            } else {
+                setErrorMessage(result.error);
+            }
+        } catch (error) {
+            setErrorMessage('An error occurred during signup.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -45,12 +65,12 @@ const SignUp = () => {
             {errorMessage && <p className="error">{errorMessage}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="username">Username</label>
+                    <label htmlFor="name">Full Name</label>
                     <input
                         type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
                         required
                     />
@@ -88,7 +108,29 @@ const SignUp = () => {
                         required
                     />
                 </div>
-                <button type="submit">Sign Up</button>
+                <div className="form-group">
+                    <label htmlFor="phone">Phone Number</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="city">City</label>
+                    <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                    />
+                </div>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Signing Up...' : 'Sign Up'}
+                </button>
             </form>
         </div>
     );

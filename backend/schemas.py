@@ -12,6 +12,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    city: Optional[str] = None
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -22,8 +27,7 @@ class User(UserBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Movie schemas
 class MovieBase(BaseModel):
@@ -32,7 +36,7 @@ class MovieBase(BaseModel):
     genre: str
     duration: int
     release_date: datetime
-    image_url: str
+    poster_url: str  # Changed from image_url to poster_url to match frontend
     price: float
 
 class MovieCreate(MovieBase):
@@ -41,8 +45,7 @@ class MovieCreate(MovieBase):
 class Movie(MovieBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Theater schemas
 class TheaterBase(BaseModel):
@@ -56,8 +59,7 @@ class TheaterCreate(TheaterBase):
 class Theater(TheaterBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Show schemas
 class ShowBase(BaseModel):
@@ -77,8 +79,7 @@ class Show(ShowBase):
     locked_seats: Optional[List[str]] = None
     locked_seats_expiry: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Booking schemas
 class BookingBase(BaseModel):
@@ -98,8 +99,7 @@ class Booking(BookingBase):
     payment_id: Optional[str] = None
     show: Show
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 # Seat locking schemas
 class SeatLockRequest(BaseModel):

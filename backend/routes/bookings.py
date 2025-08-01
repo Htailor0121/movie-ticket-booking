@@ -47,9 +47,29 @@ def create_booking(
     if show.show_time <= datetime.utcnow():
         raise HTTPException(status_code=400, detail="Cannot book for past shows")
     
+    # Check if requested seats are available
+    requested_seats = set(booking.seat_numbers)
+    
+    # Get already booked seats
+    booked_seats = set()
+    for existing_booking in show.bookings:
+        if existing_booking.payment_status == "completed":
+            booked_seats.update(existing_booking.seat_numbers)
+    
+    # Check if seats are already booked
+    if requested_seats.intersection(booked_seats):
+        raise HTTPException(status_code=400, detail="Some seats are already booked")
+    
+    # Check if seats are locked by another user
+    current_time = datetime.utcnow()
+    if show.locked_seats_expiry and show.locked_seats_expiry > current_time:
+        locked_seats = set(show.locked_seats or [])
+        if requested_seats.intersection(locked_seats):
+            raise HTTPException(status_code=400, detail="Some seats are locked by another user")
+    
     # Check if enough seats are available
-    if show.available_seats < booking.num_seats:
-        raise HTTPException(status_code=400, detail="Not enough seats available")
+    if len(requested_seats) != booking.num_seats:
+        raise HTTPException(status_code=400, detail="Number of seats doesn't match seat numbers")
     
     # Create booking
     db_booking = Booking(

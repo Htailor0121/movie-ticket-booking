@@ -13,11 +13,27 @@ export const AuthProvider = ({ children }) => {
         let isMounted = true;
         // Check if user is logged in
         const token = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        if (token && savedUser) {
-            setUser(JSON.parse(savedUser));
+        if (token) {
+            // Fetch current user data from API
+            getCurrentUser()
+                .then(response => {
+                    if (isMounted) {
+                        setUser(response.data);
+                        localStorage.setItem('user', JSON.stringify(response.data));
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to fetch user data:', error);
+                    // Clear invalid token
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                })
+                .finally(() => {
+                    if (isMounted) setLoading(false);
+                });
+        } else {
+            setLoading(false);
         }
-        setLoading(false);
         return () => { isMounted = false; };
     }, []);
 
@@ -25,8 +41,13 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await loginApi(email, password);
             localStorage.setItem('token', response.data.access_token);
-            localStorage.setItem('user', JSON.stringify({ email }));
-            setUser({ email });
+            
+            // Fetch user data after successful login
+            const userResponse = await getCurrentUser();
+            const userData = userResponse.data;
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+            
             if (typeof window !== 'undefined') navigate('/movies');
             return { success: true };
         } catch (error) {

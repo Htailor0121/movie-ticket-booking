@@ -25,7 +25,7 @@ class Movie(Base):
     genre = Column(String(100))
     duration = Column(Integer)  # Duration in minutes
     release_date = Column(DateTime)
-    image_url = Column(String(255))
+    poster_url = Column(String(255))  # Changed from image_url to poster_url
     price = Column(Float, nullable=False)
     shows = relationship("Show", back_populates="movie")
 
@@ -47,7 +47,7 @@ class Show(Base):
     show_time = Column(DateTime, nullable=False)
     available_seats = Column(Integer)
     price = Column(Float, nullable=False)
-    locked_seats = Column(JSON, default=list)  # List of temporarily locked seats
+    locked_seats = Column(JSON, default=[])  # List of temporarily locked seats
     locked_seats_expiry = Column(DateTime)  # Expiry time for locked seats
     
     movie = relationship("Movie", back_populates="shows")

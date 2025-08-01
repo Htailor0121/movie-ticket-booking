@@ -57,10 +57,16 @@ def create_show(
         raise HTTPException(status_code=400, detail="Show time must be in the future")
     
     # Check for overlapping shows in the same theater
+    # A show overlaps if it starts before the new show ends and ends after the new show starts
+    # Assuming each show lasts 2 hours (120 minutes)
+    show_duration = timedelta(minutes=120)
+    new_show_start = show.show_time
+    new_show_end = show.show_time + show_duration
+    
     overlapping_show = db.query(Show).filter(
         Show.theater_id == show.theater_id,
-        Show.show_time <= show.show_time,
-        Show.show_time >= show.show_time
+        Show.show_time < new_show_end,
+        Show.show_time + show_duration > new_show_start
     ).first()
     
     if overlapping_show:
@@ -88,11 +94,17 @@ def update_show(
         raise HTTPException(status_code=400, detail="Show time must be in the future")
     
     # Check for overlapping shows in the same theater
+    # A show overlaps if it starts before the new show ends and ends after the new show starts
+    # Assuming each show lasts 2 hours (120 minutes)
+    show_duration = timedelta(minutes=120)
+    new_show_start = show.show_time
+    new_show_end = show.show_time + show_duration
+    
     overlapping_show = db.query(Show).filter(
         Show.theater_id == show.theater_id,
         Show.id != show_id,
-        Show.show_time <= show.show_time,
-        Show.show_time >= show.show_time
+        Show.show_time < new_show_end,
+        Show.show_time + show_duration > new_show_start
     ).first()
     
     if overlapping_show:
