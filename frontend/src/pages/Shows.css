@@ -64,6 +64,15 @@
     background: #dc3545;
     color: white;
 }
+p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    unicode-bidi: isolate;
+    color: black;
+}
 
 .shows-results h3 {
     color: #333;
