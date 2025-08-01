@@ -106,7 +106,14 @@
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
 }
-
+body {
+color: rgb(5 2 2);
+font-family: Roboto, Helvetica, Arial, sans-serif;
+font-weight: 400;
+font-size: 1rem;
+line-height: 1.5;
+letter-spacing: 0.00938em;
+}
 .show-card {
     background: white;
     border-radius: 12px;
