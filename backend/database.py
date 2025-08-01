@@ -3,34 +3,31 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
-from urllib.parse import quote_plus
 
-# Load environment variables
+# Load environment variables from .env file (only useful in local dev)
 load_dotenv()
 
-# Check if we're using PostgreSQL (Render) or MySQL
-DATABASE_URL = os.getenv('DATABASE_URL')
+# Get the connection string from environment variables
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
-    # Convert postgres:// to postgresql:// for SQLAlchemy
-    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-elif DATABASE_URL and DATABASE_URL.startswith('mysql://'):
-    # MySQL connection string from DATABASE_URL
-    DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+pymysql://', 1)
-elif DATABASE_URL and DATABASE_URL.startswith('mysql+pymysql://'):
-    # Already in correct format for pymysql
-    pass
-else:
-    # MySQL connection string with individual environment variables
-    password = quote_plus(os.getenv('MYSQL_PASSWORD', ''))
-    DATABASE_URL = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{password}@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
+# Raise error if not set
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set in environment variables")
 
+# Adjust protocol for SQLAlchemy if needed
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+elif DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+
+# Set up the SQLAlchemy engine and session
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Base model for SQLAlchemy
 Base = declarative_base()
 
-# Dependency to get the database session
+# Dependency to get DB session in FastAPI
 def get_db():
     db = SessionLocal()
     try:
